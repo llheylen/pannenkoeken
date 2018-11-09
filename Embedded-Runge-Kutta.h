@@ -20,7 +20,7 @@ void ERK(vector<Body> bodies, double h, double tstart, double teind) {
 		mass.push_back(bodies[i].getmass());
 	}
 
-	// definiëren van verschillende objecten nodig tijdens het integratieschema
+	// definiÃ«ren van verschillende objecten nodig tijdens het integratieschema
 	vector<Vec> k1;
 	vector<Vec> k2;
 	vector<Vec> k3;
@@ -35,7 +35,7 @@ void ERK(vector<Body> bodies, double h, double tstart, double teind) {
 	ofstream snelheden("snelheden_ERK.txt");
 	ofstream ener("energie_ERK.txt");
 
-	// het integratieschema uitvoeren 
+	// het integratieschema uitvoeren
 	for (double t = tstart; t < teind; t += h) {
 		// berekenen van de relevante formules
 		k1 = calc_k(yn, mass, h);

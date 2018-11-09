@@ -3,58 +3,37 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <ctime>
 
 #include "Body.h"
+
 #include "Runge-Kutta-4.h"
 #include "Embedded-Runge-Kutta.h"
 #include "Verlet.h"
 #include "Forest-Ruth.h"
 #include "PEFRL.h"
+
 using namespace std;
 
-// functie die de snelheid van het massamiddelpunt berekent en dit naar nul zet door te corrigeren in de snelheden van de lichamen
+// functie die de positie en snelheid van het massamiddelpunt berekent
+// en deze naar nul zet door te corrigeren in de posities en snelheden van de lichamen
 void vastCOM(vector<Body>* bodies) {
-	unsigned int aantal = bodies->size();
-	Vec COMpos = Vec();
-	Vec COMvel = Vec();
+	Vec COM_pos = Vec();
+	Vec COM_vel = Vec();
 	double Mass = 0;
-
-	for (unsigned int i = 0; i < aantal; i++) {
-		COMpos += (*bodies)[i].getpos() * (*bodies)[i].getmass();
-		COMvel += (*bodies)[i].getvel() * (*bodies)[i].getmass();
+	for (unsigned int i = 0; i < bodies->size(); i++) {
+		COM_pos += (*bodies)[i].getpos() * (*bodies)[i].getmass();
+		COM_vel += (*bodies)[i].getvel() * (*bodies)[i].getmass();
 		Mass += (*bodies)[i].getmass();
 	}
-
-	COMpos /= Mass;
-	COMvel /= Mass;
-
-	for (unsigned int i = 0; i < aantal; i++) {
-		(*bodies)[i].setpos((*bodies)[i].getpos() - COMpos);
-		(*bodies)[i].setvel((*bodies)[i].getvel() - COMvel);
-		(*bodies)[i].setmass((*bodies)[i].getmass() / Mass);
+	COM_pos /= Mass;
+	COM_vel /= Mass;
+	for (unsigned int i = 0; i < bodies->size(); i++) {
+		(*bodies)[i].setpos((*bodies)[i].getpos() - COM_pos);
+		(*bodies)[i].setvel((*bodies)[i].getvel() - COM_vel);
 	}
 }
 
-// functie die de posities en snelheden herschaalt zodat is voldaan aan het viriaal theorema
-void scaling(vector<Body>* bodies) {
-	unsigned int aantal = bodies->size();
-	double Epot = 0;
-	double Ekin = 0;
-
-	for (unsigned int i = 0; i < aantal; i++) {
-		Ekin += 0.5 * (*bodies)[i].getmass() * (*bodies)[i].getvel().norm2();
-		for (unsigned int j = 0; j < aantal; j++) {
-			if (i != j) {
-				Epot -= 0.5 * (*bodies)[i].getmass() * (*bodies)[j].getmass() / ((*bodies)[i].getpos() - (*bodies)[j].getpos()).norm();
-			}
-		}
-	}
-
-	for (unsigned int i = 0; i < aantal; i++) {
-		(*bodies)[i].setpos((*bodies)[i].getpos() * (-2) * Epot);
-		(*bodies)[i].setvel((*bodies)[i].getvel() * 0.5 / pow(Ekin, 0.5));
-	}
-}
 
 // the main function
 int main()
@@ -92,18 +71,35 @@ int main()
 	}
 	parameters.close();
 
-	// zorgen dat het COM niet beweegt, in de oorsprong staat, en totale massa gelijk aan 1
+	// zorgen dat het COM niet beweegt
 	vastCOM(&bodies);
-
-	// unit scaling --> zorgen dat de totale energie = -1/4
-	scaling(&bodies);
+	// vastCOM(&bodies);
 
 	// de verschillende integratoren:
-	RK4(bodies, h, tstart, teind);
+	time_t start, eind;
+	double tijd;
+
+	start = time(NULL);
+	RK4_1(bodies, h, tstart, teind);
+	eind = time(NULL);
+	tijd = difftime(eind, start);
+	cout << "tijd RK41: " << tijd << endl;
+
+	start = time(NULL);
+	RK4_2(bodies, h, tstart, teind);
+	eind = time(NULL);
+	tijd = difftime(eind, start);
+	cout << "tijd RK42: " << tijd << endl;
+
+	start = time(NULL);
 	ERK(bodies, h, tstart, teind);
-	Verlet(bodies, h, tstart, teind);
-	FR(bodies, h, tstart, teind);
-	PEFRL(bodies, h, tstart, teind);
+	eind = time(NULL);
+	tijd = difftime(eind, start);
+	cout << "tijd ERK: " << tijd << endl;
+
+	//Verlet(bodies, h, tstart, teind);
+	//FR(bodies, h, tstart, teind);
+	//PEFRL(bodies, h, tstart, teind);
 
 	cout << "finished simulating, enter key to stop the program..." << endl;
 	getchar();
