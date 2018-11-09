@@ -37,6 +37,6 @@ def orbits_plotten_b(datafile):
     plt.show()
 
 #orbit plotten RK4
-orbits_plotten_a("output_RK41.txt")
-orbits_plotten_a("output_RK42.txt")
+orbits_plotten_a("output_RK4_1.txt")
+orbits_plotten_a("output_RK4_2.txt")
 orbits_plotten_b("posities_ERK.txt")
