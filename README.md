@@ -1,2 +1,2 @@
 # astrosim
-recept pannekoeken voor 6 personen
+recept pannenkoeken voor 6 personen
