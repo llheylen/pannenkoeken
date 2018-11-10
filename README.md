@@ -1,2 +1,2 @@
 # astrosim
-Project astrofysische simulaties
+recept pannekoeken voor 6 personen
