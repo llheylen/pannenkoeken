@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 # [t,(x1,y1,z1),...(xN,yN,zN)] zodat je nadien gewoon over deze lijst kan loopen, en gemakkelijk eender welk tijdstip eruit pikken enz.
 # deze aanpak is ook cruciaal om 'lijnen'(hoe orbits meestal voorgesteld worden) te plotten (aangezien je dan alle data voor het 
 # instantane tijdstip 't' ook moet kunnen plotten
-def orbits_plotten_a(methode='RK4_1'):
+def orbits_plotten_a(methode='RK4_1', vectoren='*'):
     data = np.loadtxt('output_{}.txt'.format(RK4_1)) #er van uitgaande dat we onze outpilenames standaardiseren naar 'output_methode.txt'
     #Bepaal aantal bodies = lengte van regel -1, gedeeld door 3+3+2=8 (tijd, energie en energiefout staan er ook in)
     #PS: ik laat de snelheid erin, aangezien dit in de verre toekomst te pas kan komen om richtingsvectoren te visualiseren
