@@ -24,9 +24,9 @@ public:
 	double gety() { return y; }
 	double getz() { return z; }
 
-	double norm() const { return sqrt(x*x + y*y + z*z); }
-	double norm2() const { return x*x + y*y + z*z; }
-	double norm3() const { double r = sqrt(x*x + y*y + z*z); return r*r*r; }
+	double norm() const { return sqrt(x*x + y * y + z * z); }
+	double norm2() const { return x * x + y * y + z * z; }
+	double norm3() const { double r = sqrt(x*x + y * y + z * z); return r * r*r; }
 
 	Vec& operator+=(Vec v) {
 		x += v.x;
@@ -316,13 +316,25 @@ std::vector<Vec> calc_k(std::vector<Vec> y, std::vector<double> mass, double h) 
 		Vec a = Vec();
 		for (unsigned int j = 0; j < mass.size(); j++) {
 			if (i != j) {
-				a -= mass[j] * (y[2*i] - y[2*j]) / (y[2*i] - y[2*j]).norm3();
+				a -= mass[j] * (y[2 * i] - y[2 * j]) / (y[2 * i] - y[2 * j]).norm3();
 			}
 		}
 		a *= G;
 		g.push_back(a);
 	}
-	return h*g;
+	return h * g;
+}
+
+// functie die gegeven de huidige toestand van het systeem, initiële energie en de tijd
+// de data in het correcte format output: (t, (x, y, z, vx, vy, vz) x N, e, relatieve-energiefout)
+void uitschrijven_data(double t, std::vector<Body> bodies, double e0, std::ofstream& output_file) {
+	output_file << t << ' ';
+	for (Body bod : bodies) {
+		output_file << bod.getpos().getx() << ' ' << bod.getpos().gety() << ' ' << bod.getpos().getz();
+		output_file << ' ' << bod.getvel().getx() << ' ' << bod.getvel().gety() << ' ' << bod.getvel().getz() << ' ';
+	}
+	double e = calc_ener(bodies);
+	output_file << e << ' ' << abs((e - e0) / e0) << std::endl;
 }
 
 #endif BODY_H
